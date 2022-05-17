@@ -20,9 +20,9 @@ max_KP = [0, 0, 0]
 
 ####################################################################################################
 
-msf_np   = np.load('msf_f.npy')                 # 融合后msf图的形状： (4, 1600, 1660)
-pan_np   = np.load('pan_f.npy')                 # 融合后pan图的形状： (4, 1600, 1660)
-lbl_np   = hd.loadmat("label.mat")['label'].astype('uint8')     #         标签形状:  (800,830)
+msf_np   = np.load('msf_f.npy')                 
+pan_np   = np.load('pan_f.npy')                 
+lbl_np   = hd.loadmat("label.mat")['label'].astype('uint8')    
 lbl_np   = lbl_np-1
 row = lbl_np.shape[0]
 col = lbl_np.shape[1]
