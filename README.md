@@ -39,7 +39,7 @@ Before you start running our code, make sure that you have installed the various
 1. Prepare your PAN and MS images and the ground truth file
 2. Preprocess the data
 3. Modify the parameters of the codes to fit your need
-4. Run the main scripts to train your model
+4. Run the main scripts to train or test your model
 5. Save the weights to  `.pkl` file and have a test
 
 
