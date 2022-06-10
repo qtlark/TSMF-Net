@@ -1,6 +1,6 @@
 # TSMF-Net
 
-This is a implementation of TSMF-Net under the Pytorch framework
+This is a implementation of TSMF-Net under the Pytorch framework.
 
 
 
