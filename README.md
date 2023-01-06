@@ -53,4 +53,16 @@ Before you start running our code, make sure that you have installed the various
 5. Visualize the results by `ms_visual.py` and `pan_visual.py`
 
 
+## Citation
+```
+@article{liao2022two,
+  title={A Two-Stage Mutual Fusion Network for Multispectral and Panchromatic Image Classification},
+  author={Liao, Yinuo and Zhu, Hao and Jiao, Licheng and Li, Xiaotong and Li, Na and Sun, Kenan and Tang, Xu and Hou, Biao},
+  journal={IEEE Transactions on Geoscience and Remote Sensing},
+  volume={60},
+  pages={1--18},
+  year={2022},
+  publisher={IEEE}
+}
+```
 
