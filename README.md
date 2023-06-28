@@ -1,8 +1,15 @@
 # TSMF-Net
 
-This is a implementation of TSMF-Net under the Pytorch framework.
+Language: [English](README.md)，[简体中文](README_zh.md)
+
+![](extra/TSMF.webp)
+
+
+
+# Cite
+
 ```
-@article{liao2022two,
+@article{liao2022tsmf,
   title={A Two-Stage Mutual Fusion Network for Multispectral and Panchromatic Image Classification},
   author={Liao, Yinuo and Zhu, Hao and Jiao, Licheng and Li, Xiaotong and Li, Na and Sun, Kenan and Tang, Xu and Hou, Biao},
   journal={IEEE Transactions on Geoscience and Remote Sensing},
@@ -15,51 +22,95 @@ This is a implementation of TSMF-Net under the Pytorch framework.
 
 
 
-## Requirements
+# Environment
 
-| Environment & Package | Version  |
-| :-------------------: | :------: |
-|        python         |  3.6.10  |
-|         cuda          |   10.1   |
-|         torch         |  1.3.1   |
-|      torchvision      |  0.4.2   |
-|        opencv         | 4.4.0.46 |
-|         gdal          |  3.0.2   |
-|        libtiff        |  0.4.2   |
-|         numpy         |  1.19.2  |
-|        pillow         |  8.0.1   |
-|         scipy         |  1.5.4   |
-|      hdf5storage      |  0.1.18  |
+| Env/Package | Version  |
+| :---------: | :------: |
+|   python    |  3.6.10  |
+|    cuda     |   10.1   |
+|    torch    |  1.3.1   |
+| torchvision |  0.4.2   |
+|   opencv    | 4.4.0.46 |
+|    gdal     |  3.0.2   |
+|   libtiff   |  0.4.2   |
+|    numpy    |  1.19.2  |
+|   pillow    |  8.0.1   |
+|    scipy    |  1.5.4   |
+| hdf5storage |  0.1.18  |
 
-Before you start running our code, make sure that you have installed the various libraries above and in `requirements.txt` as required. Our code runs on Linux system. To avoid unnecessary problems, please test our code on Linux systems.
-
-
-
-## Preprocess
-
-1. Prepare the PAN and MS images and the ground truth file
-2. Ensure the format of images is `.tiff` or `.tif`, and the format of ground truth is `.npy`
-3. Calculate the linear factors of the PAN and MS images by `factors.m`
-4. Fuse the PAN and MS images by `image_fusion.py`
-5. Storage the `.npy` fusion results with the ground truth in the same folder
+Set up the environment by `requirements.txt` or `jianchao.yaml`, which are both in `extra` folder.
 
 
 
-## Train&Test
+# Preprocess
 
-1. Prepare your PAN and MS images and the ground truth file
-2. Preprocess the data
-3. Modify the parameters of the codes to fit your need
-4. Run the main scripts to train or test your model
-5. Save the weights to  `.pkl` file and have a test
+## 1) get_vec.py
+
+**Input：**`msf.tif` and `pan.tif`
+
+**Detail：**`get_vec.py` does 2x upsampling on `msf`, reshape $(H,W,4)\to(2H,2W,4)$; And it does `2-split` operation on `pan`, reshape $(4H,4W,1)\to(2H,2W,4)$, both have the same shape at time
+
+Then call `to_tensor()` function to normalize both of them, making data type `float32` and data range `[0,1]`
+
+Finally they will be flattened, reshape $(2H,2W,4)\to(2H\times2W,4)$
+
+**Output：**`msf.mat` and `pan.mat`
 
 
 
-## Visualize
+## 2) get_para.m
 
-1. Prepare your PAN and MS images and the ground truth file
-2. Preprocess the data
-3. Ensure your model in `.pkl` format
-4. Modify the parameters of the codes to fit your need
-5. Visualize the results by `ms_visual.py` and `pan_visual.py`
+**Input：**`msf.mat` and `pan.mat`
 
+**Detail：**Let the weight parameter of `msf` be $\alpha_i\quad(i=1,2,3,4)$ and the weight parameter of `pan` be $\beta_i\quad(i=1,2,3,4)$. Solve the following convex optimization problem:
+$$
+\mathop{\min}_{\alpha_i,\beta_i} \Vert \sum_{i=1}^4 \alpha_i M_i - \sum_{i=1}^4  \beta_i P_i \Vert_2^2
+\\
+s.t. \  \alpha_i,\beta_i>0, \ \sum_{i=1}^4  \beta_i=1
+$$
+**Output：**Run time `sj`, weight parameters `para` (i.e. $\alpha_i$ and $\beta_i$) and minimum value `val`
+
+**Caution：**This MATLAB script depends on `icanfast.m`, please be careful not to delete or move it
+
+
+
+## 3) img_fusion.py
+
+**Input：**`msf.tif`, `pan.tif` , $\alpha_i$ and $\beta_i$ , which need to be modified manually in line `112`
+
+**Detail：**Refer ATIHS section of the paper for details
+
+**Output：**`msf_f.npy` and`pan_f.npy`
+
+
+
+
+
+# Train&Test
+
+### train.py
+
+**Input：**`msf_f.npy`、`pan_f.npy`和`label.mat`
+
+**Detail：**Train&Test in one
+
+**Output**：`.pkl` model named after `AA`
+
+
+
+
+
+# Visualize
+
+### draw.py
+
+**Input：**`msf_f.npy`, `pan_f.npy` and `label.mat`
+
+**Detail：**half 0 and full 1
+
+**Output**：`xx_half.png` and  `xx_full.png`
+
+<center class="half">
+    <img src="viz/10_half.webp" width="360">
+    <img src="viz/10_full.webp" width="360">
+</center>
