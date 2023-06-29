@@ -58,6 +58,8 @@ Finally they will be flattened, reshape $(2H,2W,4)\to(2H\times2W,4)$
 **Input:** `msf.mat` and `pan.mat`
 
 **Detail:** Let the weight parameter of `msf` be $\alpha_i\quad(i=1,2,3,4)$ and the weight parameter of `pan` be $\beta_i\quad(i=1,2,3,4)$. Solve the following convex optimization problem:
+
+
 $$
 \mathop{\min}\limits_{\alpha_i,\beta_i} \Vert \sum_{i=1}^4 \alpha_i M_i - \sum_{i=1}^4  \beta_i P_i \Vert_2^2
 $$
