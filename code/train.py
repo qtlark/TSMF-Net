@@ -12,7 +12,7 @@ from torch.utils.data import Dataset, DataLoader
 
 
 
-net_num = int( input("在哪个CUDA上训练: ") )
+net_num = int( input("(option: 0, 1, 2, 3)Train on CUDA: ") )
 max_result = [0, 0, 0] #OA, AA, KAPPA
 max_OA = [0, 0, 0]   
 max_AA = [0, 0, 0]   
@@ -21,21 +21,21 @@ max_KP = [0, 0, 0]
 
 ####################################################################################################
 
-msf_np   = np.load('../dataset/msf_f.npy')                 # 融合后msf图的形状： (4, 1600, 1660)
-pan_np   = np.load('../dataset/pan_f.npy')                 # 融合后pan图的形状： (4, 1600, 1660)
-lbl_np   = hd.loadmat("../dataset/label.mat")['label'].astype('uint8')     #         标签形状:  (800,830)
+msf_np   = np.load('../dataset/msf_f.npy')                
+pan_np   = np.load('../dataset/pan_f.npy')                
+lbl_np   = hd.loadmat("../dataset/label.mat")['label'].astype('uint8')    
 lbl_np   = lbl_np-1
 row = lbl_np.shape[0]
 col = lbl_np.shape[1]
 
-print('初始msf和pan的类型及形状为:')
+print('The shape and dtype of origin msf and pan are:')
 print(msf_np.dtype, msf_np.shape)
 print(pan_np.dtype, pan_np.shape)
 print("\n")
 
 ####################################################################################################
 
-Patch_size = 32                                 # msf和pan截块的边长统一
+Patch_size = 32                                 
 img_fill = int(Patch_size/2)
 Interpolation = cv2.BORDER_REFLECT_101
 msf_np = cv2.copyMakeBorder(msf_np, img_fill, img_fill, img_fill, img_fill, Interpolation)
@@ -44,17 +44,17 @@ pan_np = cv2.copyMakeBorder(pan_np, img_fill, img_fill, img_fill, img_fill, Inte
 msf_np = msf_np.transpose( (2,0,1) )
 pan_np = pan_np.transpose( (2,0,1) )
 
-print('边界msf和pan的类型及形状为:')
+print('The shape and dtype of msf and pan are:')
 print(msf_np.dtype, msf_np.shape)
 print(pan_np.dtype, pan_np.shape)
 print("\n")
 
-label_element, element_count = np.unique(lbl_np, return_counts=True)  # 返回类别标签与各个类别所占的数量
+label_element, element_count = np.unique(lbl_np, return_counts=True) 
 kind_sum  = len(label_element) - 1
 label_sum = sum(element_count)
-print('总标注的类别数: ', kind_sum)
-print('总样本总数:', label_sum)
-print('总各类别的样本数: ')
+print('Total number of categories: ', kind_sum)
+print('Total number of samples:', label_sum)
+print('Total number of samples for each category: ')
 for i in range(kind_sum+1):
     print(str(label_element[i]).ljust(3), str(element_count[i]).ljust(8), "%.1f%%"%(100*element_count[i]/label_sum))
 print("\n")
@@ -70,7 +70,7 @@ for x in range(row):
 
 random.shuffle(all_labeled_xyz)
 Train_Rate = 0.01
-Train_Num  = int( Train_Rate*len(all_labeled_xyz) ) +1  #+1是向上取整
+Train_Num  = int( Train_Rate*len(all_labeled_xyz) ) +1  # +1 to round up
 
 train_xyz = all_labeled_xyz[:Train_Num]
 test_xyz = all_labeled_xyz[Train_Num:]
@@ -80,18 +80,18 @@ test_xyz = all_labeled_xyz[Train_Num:]
 
 look_xyz = np.array(train_xyz)
 
-label_element, element_count = np.unique(look_xyz[:,2], return_counts=True)  # 返回类别标签与各个类别所占的数量
+label_element, element_count = np.unique(look_xyz[:,2], return_counts=True)
 kind_sum  = len(label_element)
 label_sum = sum(element_count)
-print('总标注的类别数: ', kind_sum)
-print('总样本总数:', label_sum)
-print('总各类别的样本数: ')
+print('Total number of train categories: ', kind_sum)
+print('Total number of train samples:', label_sum)
+print('Total number of train samples for each category: ')
 for i in range(kind_sum):
     print(str(label_element[i]).ljust(3), str(element_count[i]).ljust(8), "%.1f%%"%(100*element_count[i]/label_sum))
 print("\n")
 
 ####################################################################################################
-#补充样本以均衡
+# supply to balance
 '''
 supply_num = [40, 50, 0, 0, 40, 0, 0, 0, 0, 50, 0]
 for xyz in test_xyz:
@@ -104,16 +104,16 @@ for xyz in test_xyz:
 '''
 
 ####################################################################################################
-#补充后的信息
+# after supply
 '''
 look_xyz = np.array(train_xyz)
 
-label_element, element_count = np.unique(look_xyz[:,2], return_counts=True)  # 返回类别标签与各个类别所占的数量
+label_element, element_count = np.unique(look_xyz[:,2], return_counts=True) 
 kind_sum  = len(label_element)
 label_sum = sum(element_count)
-print('总标注的类别数: ', kind_sum)
-print('总样本总数:', label_sum)
-print('总各类别的样本数: ')
+print('Total number of supplied categories: ', kind_sum)
+print('Total number of supplied samples:', label_sum)
+print('Total number of supplied samples for each category: ')
 for i in range(kind_sum):
     print(str(label_element[i]).ljust(3), str(element_count[i]).ljust(8), "%.1f%%"%(100*element_count[i]/label_sum))
 print("\n")
@@ -151,8 +151,8 @@ bz = 64
 train_iter = DataLoader(train_dataset, batch_size=bz, shuffle=False, num_workers = 32)
 test_iter  = DataLoader(test_dataset , batch_size=bz, shuffle=False, num_workers = 32)
 
-print("训练比为%.2f, 批量大小为%d"%(Train_Rate, bz))
-print("训练集共有%d个batch, 测试集共有%d个batch" %(len(train_iter),len(test_iter)))
+print("Trianing rate is %.2f, batch size is %d"%(Train_Rate, bz))
+print("%d batch for trian, %d batch for test" %(len(train_iter),len(test_iter)))
 print("\n")
 
 
@@ -378,7 +378,7 @@ def batch_correct(y_hat, y):
 
 
 def test_model(net, test_iter): 
-    net.eval()  # 设置为评估模式
+    net.eval() 
     Mat = np.zeros((kind_sum, kind_sum))
     now_c = 0
 
@@ -395,7 +395,7 @@ def test_model(net, test_iter):
             OA = np.sum(right_vector) / np.sum(Mat)
             GL = right_vector / np.sum(Mat, axis=1)
             AA = np.mean( GL )
-            print("各类样本", end=': ')
+            print("Detail", end=': ')
             print(np.sum(Mat, axis=1))
             
             PE = 0
@@ -466,11 +466,11 @@ def train_model(net, train_iter, test_iter, num_epochs, lr):
             test_res = test_model(net, test_iter)
             with open('../model/log/log.txt', mode='a+') as f:
                 f.write("result:%s\n"%(str(test_res)))
-            print("用时: %.2f"%(time.time()-now_t))
-            print("本轮的结果为: "+ str(test_res))
-            print("最佳OA为: "+ str(max_OA))
-            print("最佳AA为: "+ str(max_AA))
-            print("最佳KP为: "+ str(max_KP))
+            print("Runing Time: %.2f"%(time.time()-now_t))
+            print("Test Result: "+ str(test_res))
+            print("Best OA is: "+ str(max_OA))
+            print("Best AA is: "+ str(max_AA))
+            print("Best KP is: "+ str(max_KP))
             AA = test_res[1]
             if AA>0.9:
                 torch.save(net, '../model/%s.pkl'%AA)

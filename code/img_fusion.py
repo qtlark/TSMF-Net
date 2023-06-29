@@ -1,9 +1,8 @@
 import cv2
-import scipy.io
 import numpy as np
 from libtiff import TIFF
 
-############# 要用到的函数 #############
+# Functions
 def to_tensor(image):
     max_i = np.max(image)
     min_i = np.min(image)
@@ -65,11 +64,11 @@ def find_plzh(x):
             chk[i] = 1
             find_plzh(x+1)
             chk[i] = 0
-############# 要用到的函数 #############        
+  
     
 
 
-# 开始
+# begin
 msf = TIFF.open('../dataset/ms4.tif', mode='r').read_image().astype("float32")
 msf = cv2.resize(msf, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
 msf = to_tensor( msf )  
@@ -86,7 +85,7 @@ pan = pan.transpose( (2,0,1) )
 
 
 
-# 通道对齐
+# align the channel
 gram = get_gram(msf, pan)
 find_plzh(0)
 print(gram)
@@ -103,16 +102,19 @@ for pl in plzh:
 
 print(nowbest)
 print(np.sum(np.sum(pan, axis=-1),axis=-1))
-pan[[0,1,2,3],:,:] = pan[nowbest,:,:]       #调换顺序
+pan[[0,1,2,3],:,:] = pan[nowbest,:,:]       # switch the order
 print(np.sum(np.sum(pan, axis=-1),axis=-1))
 
 
 
-# 强度分量
-防呆不防傻
+# Intensity component
 alpha = np.array( [0.3707, 0.0000, 0.0174, 0.4367] )
 beta  = np.array( [0.3937, 0.0055, 0.0929, 0.5079] )
-beta[[0,1,2,3]] = beta[nowbest]             #调换顺序
+beta[[0,1,2,3]] = beta[nowbest]             # switch the order
+print("<== Please check parameters every time you run the code ==>")
+print("alpha is" + str(alpha))
+print("beta  is" + str(beta))
+print("<== Please check parameters every time you run the code ==>")
 
 I_m = alpha[0]*msf[0] + alpha[1]*msf[1] + alpha[2]*msf[2] + alpha[3]*msf[3]
 I_p =  beta[0]*pan[0] +  beta[1]*pan[1] +  beta[2]*pan[2] +  beta[3]*pan[3]
@@ -122,17 +124,17 @@ mu  = np.mean(I_mean)
 gamma = sigmoid( (I_mean-mu)*( sign(I_m-I_p) ) )
 I_c = gamma*I_m + (1-gamma)*I_p
 
-print("I_m和I_p之间的bias为", end=': ')
+print("The bias between I_m and I_p is", end=': ')
 print(np.sum((I_m-I_p)**2))         
-print("I_m和I_c之间的bias为", end=': ')
+print("The bias between I_m and I_c is", end=': ')
 print(np.sum((I_m-I_c)**2))
-print("I_p和I_c之间的bias为", end=': ')
+print("The bias between I_p and I_c is", end=': ')
 print(np.sum((I_p-I_c)**2))
-print("I_mean和I_c之间的bias为", end=': ')
+print("The bias between I_mean and I_c is", end=': ')
 print(np.sum((I_mean-I_c)**2))
 
 
-# 检测算子
+# edge detection operator
 W_mi = [ edge_dect(msf[i]) for i in range(4) ]
 W_pi = [ edge_dect(pan[i]) for i in range(4) ]
 
@@ -143,13 +145,13 @@ W_m  = [alpha[i]/alpha_mean*( gamma*W_mi[i] + (1-gamma)*W_pi[i] ) for i in range
 W_p  = [beta[i] /beta_mean* ( gamma*W_mi[i] + (1-gamma)*W_pi[i] ) for i in range(4)]
 
 
-# 融合
+# fusion
 for i in range(4):
     msf[i] = msf[i] + W_m[i]*(I_c-I_m) 
     pan[i] = pan[i] + W_p[i]*(I_c-I_p) 
 
-msf = msf.transpose( (1,2,0) )      #(4,1600,1660) -> (1600,1660,4)
-pan = pan.transpose( (1,2,0) )      #(4,1600,1660) -> (1600,1660,4)
+msf = msf.transpose( (1,2,0) )      
+pan = pan.transpose( (1,2,0) )      
 
 print(msf.shape, msf.dtype, np.min(msf), np.max(msf))
 print(pan.shape, pan.dtype, np.min(pan), np.max(pan))

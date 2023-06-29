@@ -1,6 +1,6 @@
 # TSMF-Net
 
-Language: [English](README.md)，[简体中文](README_zh.md)
+Language: [English](README_en.md)，[简体中文](README.md)
 
 ![](extra/TSMF.webp)
 
@@ -9,7 +9,7 @@ Language: [English](README.md)，[简体中文](README_zh.md)
 # 引用
 
 ```
-@article{liao2022two,
+@article{liao2022tsmf,
   title={A Two-Stage Mutual Fusion Network for Multispectral and Panchromatic Image Classification},
   author={Liao, Yinuo and Zhu, Hao and Jiao, Licheng and Li, Xiaotong and Li, Na and Sun, Kenan and Tang, Xu and Hou, Biao},
   journal={IEEE Transactions on Geoscience and Remote Sensing},
@@ -70,19 +70,19 @@ s.t. \  \alpha_i,\beta_i>0, \ \sum_{i=1}^4  \beta_i=1
 $$
 **输出：**屏幕上打印 运行时间`sj`，权重参数`para`（即$\alpha_i$和$\beta_i$)，最小值`val`
 
-**注意：**此MATLAB脚本依赖于函数`icanfast.m`，请注意不要删除或随意移动
+**注意：**此MATLAB脚本依赖于函数`icanfast.m`，请不要删除或随意移动
 
 
 
 ## 3) img_fusion.py
 
-**输入：**`msf.tif`，`pan.tif`以及$\alpha_i$和$\beta_i$，需要在代码`112`行左右手动修改
+**输入：**`msf.tif`，`pan.tif`，$\alpha_i$和$\beta_i$
 
 **说明：**详见原文ATIHS阐述部分
 
 **输出：**`msf_f.npy`和`pan_f.npy`
 
-
+**注意：**$\alpha_i$和$\beta_i$需要在代码`112`行左右手动修改
 
 
 
@@ -92,11 +92,9 @@ $$
 
 **输入：**`msf_f.npy`、`pan_f.npy`和`label.mat`
 
-**说明：**运行会让你选CUDA索引，四张卡分别对应0，1，2，3；训练测试一体
+**说明：**手动选CUDA索引，四张卡分别对应0，1，2，3；训练测试一体
 
 **输出**：以`AA` 命名的`.pkl`模型
-
-
 
 
 
@@ -106,7 +104,7 @@ $$
 
 **输入：**`msf_f.npy`、`pan_f.npy`和`label.mat`
 
-**说明：**运行会让你选CUDA索引，同时会让你选半图全图，半图0全图1
+**说明：**手动选CUDA索引、半图全图，半图0全图1
 
 **输出**：半图`xx_half.png`，全图`xx_full.png`
 

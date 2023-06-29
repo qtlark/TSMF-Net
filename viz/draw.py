@@ -9,26 +9,26 @@ from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
 
 
-net_num  = int( input("在哪个CUDA上预测: ") )
-flag_all = int( input("半图0全图1: ") )
+net_num = int( input("(option: 0, 1, 2, 3)Train on CUDA: ") )
+flag_all = int( input("0 for half and 1 for full: ") )
 
 ####################################################################################################
 
-msf_np   = np.load('../dataset/msf_f.npy')                 # 融合后msf图的形状： (4, 1600, 1660)
-pan_np   = np.load('../dataset/pan_f.npy')                 # 融合后pan图的形状： (4, 1600, 1660)
-lbl_np   = hd.loadmat("../dataset/label.mat")['label'].astype('uint8')     #         标签形状:  (800,830)
+msf_np   = np.load('../dataset/msf_f.npy')               
+pan_np   = np.load('../dataset/pan_f.npy')               
+lbl_np   = hd.loadmat("../dataset/label.mat")['label'].astype('uint8')  
 lbl_np   = lbl_np-1
 row = lbl_np.shape[0]
 col = lbl_np.shape[1]
 
-print('初始msf和pan的类型及形状为:')
+print('The shape and dtype of origin msf and pan are:')
 print(msf_np.dtype, msf_np.shape)
 print(pan_np.dtype, pan_np.shape)
 print("\n")
 
 ####################################################################################################
 
-Patch_size = 32                                 # msf和pan截块的边长统一
+Patch_size = 32                               
 img_fill = int(Patch_size/2)
 Interpolation = cv2.BORDER_REFLECT_101
 msf_np = cv2.copyMakeBorder(msf_np, img_fill, img_fill, img_fill, img_fill, Interpolation)
@@ -37,17 +37,17 @@ pan_np = cv2.copyMakeBorder(pan_np, img_fill, img_fill, img_fill, img_fill, Inte
 msf_np = msf_np.transpose( (2,0,1) )
 pan_np = pan_np.transpose( (2,0,1) )
 
-print('边界msf和pan的类型及形状为:')
+print('The shape and dtype of msf and pan are:')
 print(msf_np.dtype, msf_np.shape)
 print(pan_np.dtype, pan_np.shape)
 print("\n")
 
-label_element, element_count = np.unique(lbl_np, return_counts=True)  # 返回类别标签与各个类别所占的数量
+label_element, element_count = np.unique(lbl_np, return_counts=True) 
 kind_sum  = len(label_element) - 1
 label_sum = sum(element_count)
-print('总标注的类别数: ', kind_sum)
-print('总样本总数:', label_sum)
-print('总各类别的样本数: ')
+print('Total number of categories: ', kind_sum)
+print('Total number of samples:', label_sum)
+print('Total number of samples for each category: ')
 for i in range(kind_sum+1):
     print(str(label_element[i]).ljust(3), str(element_count[i]).ljust(8), "%.1f%%"%(100*element_count[i]/label_sum))
 print("\n")
@@ -294,7 +294,7 @@ class YNet(nn.Module):
 
 ####################################################################################################
 
-# 上色
+# Visualize
 cnn = torch.load('best953831.pkl')
 cnn.cuda(net_num)
 cnn.eval()

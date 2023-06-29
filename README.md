@@ -1,6 +1,6 @@
 # TSMF-Net
 
-Language: [English](README.md)，[简体中文](README_zh.md)
+Language: [English](README.md), [简体中文](README_zh.md)
 
 ![](extra/TSMF.webp)
 
@@ -76,13 +76,13 @@ $$
 
 ## 3) img_fusion.py
 
-**Input：**`msf.tif`, `pan.tif` , $\alpha_i$ and $\beta_i$ , which need to be modified manually in line `112`
+**Input：**`msf.tif`, `pan.tif` , $\alpha_i$ and $\beta_i$
 
-**Detail：**Refer ATIHS section of the paper for details
+**Detail：**Refer the paper for details
 
-**Output：**`msf_f.npy` and`pan_f.npy`
+**Output：**`msf_f.npy` and `pan_f.npy`
 
-
+**Caution：**$\alpha_i$ and $\beta_i$ need to be modified manually in line `111,112` 
 
 
 
@@ -90,13 +90,11 @@ $$
 
 ### train.py
 
-**Input：**`msf_f.npy`、`pan_f.npy`和`label.mat`
+**Input：**`msf_f.npy`, `pan_f.npy` and `label.mat`
 
 **Detail：**Train&Test in one
 
 **Output**：`.pkl` model named after `AA`
-
-
 
 
 
@@ -106,7 +104,7 @@ $$
 
 **Input：**`msf_f.npy`, `pan_f.npy` and `label.mat`
 
-**Detail：**half 0 and full 1
+**Detail：**Enter 0 for half and 1 for full
 
 **Output**：`xx_half.png` and  `xx_full.png`
 
