@@ -24,19 +24,14 @@ Language: [English](README.md), [简体中文](README_zh.md)
 
 # Environment
 
-| Env/Package | Version  |
-| :---------: | :------: |
-|   python    |  3.6.10  |
-|    cuda     |   10.1   |
-|    torch    |  1.3.1   |
-| torchvision |  0.4.2   |
-|   opencv    | 4.4.0.46 |
-|    gdal     |  3.0.2   |
-|   libtiff   |  0.4.2   |
-|    numpy    |  1.19.2  |
-|   pillow    |  8.0.1   |
-|    scipy    |  1.5.4   |
-| hdf5storage |  0.1.18  |
+| Env/Package | Version  | Env/Package | Version |
+| :---------: | :------: | :---------: | :-----: |
+|   python    |  3.6.10  |   libtiff   |  0.4.2  |
+|    cuda     |   10.1   |    numpy    | 1.19.2  |
+|    torch    |  1.3.1   |   pillow    |  8.0.1  |
+| torchvision |  0.4.2   |    scipy    |  1.5.4  |
+|   opencv    | 4.4.0.46 | hdf5storage | 0.1.18  |
+|    gdal     |  3.0.2   |    h5py     |  3.1.0  |
 
 Set up the environment by `requirements.txt` or `jianchao.yaml`, which are both in `extra` folder.
 
@@ -63,7 +58,6 @@ Finally they will be flattened, reshape $(2H,2W,4)\to(2H\times2W,4)$
 **Input:** `msf.mat` and `pan.mat`
 
 **Detail:** Let the weight parameter of `msf` be $\alpha_i\quad(i=1,2,3,4)$ and the weight parameter of `pan` be $\beta_i\quad(i=1,2,3,4)$. Solve the following convex optimization problem:
-
 $$
 \mathop{\min}\limits_{\alpha_i,\beta_i} \Vert \sum_{i=1}^4 \alpha_i M_i - \sum_{i=1}^4  \beta_i P_i \Vert_2^2
 $$
