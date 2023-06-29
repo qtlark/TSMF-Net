@@ -1,6 +1,6 @@
 # TSMF-Net
 
-Language: [English](README_en.md)，[简体中文](README.md)
+Language: [English](README.md)，[简体中文](README_zh.md)
 
 ![](extra/TSMF.webp)
 
