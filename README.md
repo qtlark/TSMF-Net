@@ -46,43 +46,47 @@ Set up the environment by `requirements.txt` or `jianchao.yaml`, which are both 
 
 ## 1) get_vec.py
 
-**Input：**`msf.tif` and `pan.tif`
+**Input:**  `msf.tif` and `pan.tif`
 
-**Detail：**`get_vec.py` does 2x upsampling on `msf`, reshape $(H,W,4)\to(2H,2W,4)$; And it does `2-split` operation on `pan`, reshape $(4H,4W,1)\to(2H,2W,4)$, both have the same shape at time
+**Detail:**  `get_vec.py` does 2x upsampling on `msf`, reshape $(H,W,4)\to(2H,2W,4)$; And it does `2-split` operation on `pan`, reshape $(4H,4W,1)\to(2H,2W,4)$, both have the same shape at time
 
 Then call `to_tensor()` function to normalize both of them, making data type `float32` and data range `[0,1]`
 
 Finally they will be flattened, reshape $(2H,2W,4)\to(2H\times2W,4)$
 
-**Output：**`msf.mat` and `pan.mat`
+**Output:** `msf.mat` and `pan.mat`
 
 
 
 ## 2) get_para.m
 
-**Input：**`msf.mat` and `pan.mat`
+**Input:** `msf.mat` and `pan.mat`
 
-**Detail：**Let the weight parameter of `msf` be $\alpha_i\quad(i=1,2,3,4)$ and the weight parameter of `pan` be $\beta_i\quad(i=1,2,3,4)$. Solve the following convex optimization problem:
+**Detail:** Let the weight parameter of `msf` be $\alpha_i\quad(i=1,2,3,4)$ and the weight parameter of `pan` be $\beta_i\quad(i=1,2,3,4)$. Solve the following convex optimization problem:
+
+
 $$
 \mathop{\min}_{\alpha_i,\beta_i} \Vert \sum_{i=1}^4 \alpha_i M_i - \sum_{i=1}^4  \beta_i P_i \Vert_2^2
 \\
 s.t. \  \alpha_i,\beta_i>0, \ \sum_{i=1}^4  \beta_i=1
 $$
-**Output：**Run time `sj`, weight parameters `para` (i.e. $\alpha_i$ and $\beta_i$) and minimum value `val`
 
-**Caution：**This MATLAB script depends on `icanfast.m`, please be careful not to delete or move it
+
+**Output:** Run time `sj`, weight parameters `para` (i.e. $\alpha_i$ and $\beta_i$) and minimum value `val`
+
+**Caution:** This MATLAB script depends on `icanfast.m`, please be careful not to delete or move it
 
 
 
 ## 3) img_fusion.py
 
-**Input：**`msf.tif`, `pan.tif` , $\alpha_i$ and $\beta_i$
+**Input:** `msf.tif`, `pan.tif` , $\alpha_i$ and $\beta_i$
 
-**Detail：**Refer the paper for details
+**Detail:** Refer the paper for details
 
-**Output：**`msf_f.npy` and `pan_f.npy`
+**Output:** `msf_f.npy` and `pan_f.npy`
 
-**Caution：**$\alpha_i$ and $\beta_i$ need to be modified manually in line `111,112` 
+**Caution:** $\alpha_i$ and $\beta_i$ need to be modified manually in line `111,112` 
 
 
 
@@ -90,11 +94,11 @@ $$
 
 ### train.py
 
-**Input：**`msf_f.npy`, `pan_f.npy` and `label.mat`
+**Input:** `msf_f.npy`, `pan_f.npy` and `label.mat`
 
-**Detail：**Train&Test in one
+**Detail:** Train&Test in one
 
-**Output**：`.pkl` model named after `AA`
+**Output:** `.pkl` model named after `AA`
 
 
 
@@ -102,13 +106,11 @@ $$
 
 ### draw.py
 
-**Input：**`msf_f.npy`, `pan_f.npy` and `label.mat`
+**Input:** `msf_f.npy`, `pan_f.npy` and `label.mat`
 
-**Detail：**Enter 0 for half and 1 for full
+**Detail:** Enter 0 for half and 1 for full
 
-**Output**：`xx_half.png` and  `xx_full.png`
+**Output:** `xx_half.png` and  `xx_full.png`
 
-<center class="half">
-    <img src="viz/10_half.webp" width="360">
-    <img src="viz/10_full.webp" width="360">
-</center>
+<img src="viz/10_half.webp" width="360"><img src="viz/10_full.webp" width="360">
+
